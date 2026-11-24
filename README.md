@@ -5,7 +5,7 @@
 | Document item | Detail |
 | --- | --- |
 | Repository | `Njbalamani/Cloud-Sentry` |
-| Application folder | [`clous-sentry/`](./clous-sentry/) |
+| Application folder | [`cloud-sentry/`](./cloud-sentry/) |
 | Document date | 24/11/2026 |
 | Platform name | CLOUDSENTRY |
 | Primary stack | Django 5, Django REST Framework, PostgreSQL |
@@ -14,7 +14,7 @@
 
 CloudSentry is a complete Cloud Security Posture Management platform for managing cloud accounts, running read-only AWS assessments, analysing IAM permissions, scoring risk, evaluating CIS controls, visualising security posture, and exporting professional PDF or CSV reports.
 
-This root README is the repository landing page. The complete application-level documentation, including column-level database tables and the full command reference, is in [`clous-sentry/README.md`](./clous-sentry/README.md).
+This root README is the repository landing page. The complete application-level documentation, including column-level database tables and the full command reference, is in [`cloud-sentry/README.md`](./cloud-sentry/README.md).
 
 ---
 
@@ -85,7 +85,7 @@ This root README is the repository landing page. The complete application-level 
 Cloud-Sentry/
 ├── LICENSE                         Repository-level MIT license
 ├── README.md                       Repository landing documentation
-└── clous-sentry/                   Complete Django application
+└── cloud-sentry/                   Complete Django application
     ├── .dockerignore               Docker build exclusions
     ├── .env.example                Environment variable template
     ├── .github/
@@ -127,7 +127,7 @@ flowchart TB
         RLICENSE["LICENSE<br/>MIT license"]
     end
 
-    subgraph APP["clous-sentry Application"]
+    subgraph APP["cloud-sentry Application"]
         CONFIG["config/<br/>Settings, URLs, API schema"]
         DOMAIN["Domain Apps<br/>accounts, organizations, cloud_accounts,<br/>cloud_scanner, iam_analyzer,<br/>risk_engine, compliance, reports, dashboard"]
         PRESENTATION["Presentation<br/>templates, static"]
@@ -153,21 +153,21 @@ flowchart TB
 | --- | --- | --- |
 | `README.md` | Repository introduction | Quick map, architecture, workflow, and setup commands |
 | `LICENSE` | Legal permission | MIT license in Njbalamani name |
-| `clous-sentry/README.md` | Application handbook | Full setup, routes, APIs, diagrams, database dictionary, and operations |
-| `clous-sentry/config/` | Django configuration | `settings.py`, `urls.py`, `api.py`, WSGI, ASGI, error handlers |
-| `clous-sentry/accounts/` | Identity and access | Custom user, login attempts, RBAC helpers |
-| `clous-sentry/organizations/` | Tenancy | Organisation model, membership, middleware, services |
-| `clous-sentry/cloud_accounts/` | Cloud registry | Account connection, resource inventory, encrypted credentials |
-| `clous-sentry/cloud_scanner/` | Assessment engine | Rules, scans, findings, AWS, demo, and Prowler engines |
-| `clous-sentry/iam_analyzer/` | IAM analysis | Policy document analysis and least-privilege recommendations |
-| `clous-sentry/risk_engine/` | Risk scoring | Model training, scoring, factors, and explanation |
-| `clous-sentry/compliance/` | Compliance | CIS controls, assessments, and control results |
-| `clous-sentry/reports/` | Evidence export | PDF and CSV generation |
-| `clous-sentry/dashboard/` | Posture analytics | Metrics, topology, charts, dashboard API |
-| `clous-sentry/templates/` | User interface | Dashboard, forms, tables, modals, errors, reusable components |
-| `clous-sentry/static/` | Frontend assets | Design system, charts, interactions, topology renderer |
-| `clous-sentry/docs/` | Deep documentation | Architecture, API, deployment, ER diagram references |
-| `clous-sentry/tests/` | Verification | Core integration and security behaviour tests |
+| `cloud-sentry/README.md` | Application handbook | Full setup, routes, APIs, diagrams, database dictionary, and operations |
+| `cloud-sentry/config/` | Django configuration | `settings.py`, `urls.py`, `api.py`, WSGI, ASGI, error handlers |
+| `cloud-sentry/accounts/` | Identity and access | Custom user, login attempts, RBAC helpers |
+| `cloud-sentry/organizations/` | Tenancy | Organisation model, membership, middleware, services |
+| `cloud-sentry/cloud_accounts/` | Cloud registry | Account connection, resource inventory, encrypted credentials |
+| `cloud-sentry/cloud_scanner/` | Assessment engine | Rules, scans, findings, AWS, demo, and Prowler engines |
+| `cloud-sentry/iam_analyzer/` | IAM analysis | Policy document analysis and least-privilege recommendations |
+| `cloud-sentry/risk_engine/` | Risk scoring | Model training, scoring, factors, and explanation |
+| `cloud-sentry/compliance/` | Compliance | CIS controls, assessments, and control results |
+| `cloud-sentry/reports/` | Evidence export | PDF and CSV generation |
+| `cloud-sentry/dashboard/` | Posture analytics | Metrics, topology, charts, dashboard API |
+| `cloud-sentry/templates/` | User interface | Dashboard, forms, tables, modals, errors, reusable components |
+| `cloud-sentry/static/` | Frontend assets | Design system, charts, interactions, topology renderer |
+| `cloud-sentry/docs/` | Deep documentation | Architecture, API, deployment, ER diagram references |
+| `cloud-sentry/tests/` | Verification | Core integration and security behaviour tests |
 
 ---
 
@@ -468,7 +468,7 @@ flowchart LR
 | `compliance_controlresult` | Compliance | Per-control pass or fail result |
 | `reports_report` | Reporting | Generated PDF or CSV metadata |
 
-Django framework tables for sessions, permissions, content types, and REST tokens are also created by migrations. Full column-level detail is in [`clous-sentry/README.md`](./clous-sentry/README.md#9-database).
+Django framework tables for sessions, permissions, content types, and REST tokens are also created by migrations. Full column-level detail is in [`cloud-sentry/README.md`](./cloud-sentry/README.md#9-database).
 
 ---
 
@@ -490,7 +490,7 @@ Django framework tables for sessions, permissions, content types, and REST token
 
 | Step | Command or action | Purpose |
 | --- | --- | --- |
-| 1 | `cd clous-sentry` | Enter application folder |
+| 1 | `cd cloud-sentry` | Enter application folder |
 | 2 | `python -m venv .venv` | Create virtual environment |
 | 3 | `.\.venv\Scripts\python.exe -m pip install --upgrade pip` | Upgrade pip |
 | 4 | `.\.venv\Scripts\python.exe -m pip install -r requirements.txt` | Install dependencies |
@@ -513,7 +513,7 @@ Generate required secret values with:
 
 | Step | Command | Result |
 | --- | --- | --- |
-| 1 | `cd clous-sentry` | Enter application folder |
+| 1 | `cd cloud-sentry` | Enter application folder |
 | 2 | `Copy-Item .env.example .env` | Create environment file |
 | 3 | `docker compose up --build` | Build and start PostgreSQL plus web service |
 | 4 | Open `http://localhost:8000` | Access CloudSentry |
@@ -534,7 +534,7 @@ The Docker entrypoint applies migrations, seeds rules and controls, collects sta
 | Linting | `python -m ruff check .` | All checks passed |
 | Static files | `python manage.py collectstatic --noinput` | Static files collected |
 
-Run from `clous-sentry/` with `$env:TESTING='1'` set for the local SQLite test path.
+Run from `cloud-sentry/` with `$env:TESTING='1'` set for the local SQLite test path.
 
 ### 7.2 Verified behaviours
 
@@ -556,12 +556,12 @@ Run from `clous-sentry/` with `$env:TESTING='1'` set for the local SQLite test p
 | Document | Purpose |
 | --- | --- |
 | [`README.md`](./README.md) | Repository overview and quick start |
-| [`clous-sentry/README.md`](./clous-sentry/README.md) | Complete application documentation |
-| [`clous-sentry/docs/architecture.md`](./clous-sentry/docs/architecture.md) | Architecture and deployment topology |
-| [`clous-sentry/docs/api.md`](./clous-sentry/docs/api.md) | REST API reference |
-| [`clous-sentry/docs/deployment.md`](./clous-sentry/docs/deployment.md) | Production deployment guide |
-| [`clous-sentry/docs/er-diagram.md`](./clous-sentry/docs/er-diagram.md) | Entity relationship documentation |
-| [`clous-sentry/LICENSE`](./clous-sentry/LICENSE) | Application license |
+| [`cloud-sentry/README.md`](./cloud-sentry/README.md) | Complete application documentation |
+| [`cloud-sentry/docs/architecture.md`](./cloud-sentry/docs/architecture.md) | Architecture and deployment topology |
+| [`cloud-sentry/docs/api.md`](./cloud-sentry/docs/api.md) | REST API reference |
+| [`cloud-sentry/docs/deployment.md`](./cloud-sentry/docs/deployment.md) | Production deployment guide |
+| [`cloud-sentry/docs/er-diagram.md`](./cloud-sentry/docs/er-diagram.md) | Entity relationship documentation |
+| [`cloud-sentry/LICENSE`](./cloud-sentry/LICENSE) | Application license |
 | [`LICENSE`](./LICENSE) | Repository license |
 
 ---
@@ -572,4 +572,4 @@ MIT License.
 
 Copyright (c) 2026 Njbalamani.
 
-See [`LICENSE`](./LICENSE) and [`clous-sentry/LICENSE`](./clous-sentry/LICENSE).
+See [`LICENSE`](./LICENSE) and [`cloud-sentry/LICENSE`](./cloud-sentry/LICENSE).

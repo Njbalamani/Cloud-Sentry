@@ -4,7 +4,7 @@
 
 | Document item | Detail |
 | --- | --- |
-| Application folder | `clous-sentry/` |
+| Application folder | `cloud-sentry/` |
 | Repository | `Njbalamani/Cloud-Sentry` |
 | Document date | 24/11/2026 |
 | Document type | Complete application README |
@@ -72,7 +72,7 @@ CloudSentry is a professional Cloud Security Posture Management platform for org
 | --- | --- |
 | Product name | CLOUDSENTRY |
 | Product type | AI-Powered Cloud Security Posture Management Platform |
-| Application root | `clous-sentry/` |
+| Application root | `cloud-sentry/` |
 | API schema | `/api/schema/` |
 | API documentation | `/api/docs/` and `/api/redoc/` |
 | Default local URL | `http://localhost:8000` |
@@ -261,7 +261,7 @@ sequenceDiagram
 ### 4.1 Full project tree
 
 ```text
-clous-sentry/
+cloud-sentry/
 ├── .dockerignore                  Docker build exclusions
 ├── .env.example                   Environment variable template
 ├── .github/
@@ -711,7 +711,7 @@ flowchart TD
 
 | Step | Action | Command or detail |
 | --- | --- | --- |
-| 1 | Enter project folder | `cd clous-sentry` |
+| 1 | Enter project folder | `cd cloud-sentry` |
 | 2 | Create virtual environment | `python -m venv .venv` |
 | 3 | Upgrade pip | `.\.venv\Scripts\python.exe -m pip install --upgrade pip` |
 | 4 | Install packages | `.\.venv\Scripts\python.exe -m pip install -r requirements.txt` |
@@ -727,7 +727,7 @@ flowchart TD
 
 | Step | Command | Result |
 | --- | --- | --- |
-| 1 | `cd clous-sentry` | Enter project folder |
+| 1 | `cd cloud-sentry` | Enter project folder |
 | 2 | `Copy-Item .env.example .env` | Create environment configuration |
 | 3 | `docker compose up --build` | Build and start the stack |
 | 4 | Open `http://localhost:8000` | Use the application |
