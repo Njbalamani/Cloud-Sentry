@@ -1,0 +1,6 @@
+{% if demo_mode or metrics.demo_resources or metrics.demo_findings %}
+  <div class="demo-banner">
+    <span class="demo-badge">DEMO</span>
+    <span>Synthetic data is enabled. Findings labelled “Synthetic” are not live cloud results.</span>
+  </div>
+{% endif %}

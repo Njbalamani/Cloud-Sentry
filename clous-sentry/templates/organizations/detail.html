@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}{{ object.name }} · CloudSentry{% endblock %}
+{% block page_title %}{{ object.name }}{% endblock %}
+{% block content %}
+<section class="panel hero-panel">
+  <span class="eyebrow">ORGANIZATION PROFILE</span>
+  <h2>{{ object.name }}</h2>
+  <p>{{ object.description|default:"No description provided." }}</p>
+  <div class="metric-inline">
+    <span>Slug: {{ object.slug }}</span>
+    <span>{{ object.member_count }} active members</span>
+    <span>Created {{ object.created_at }}</span>
+  </div>
+  <div class="form-actions" style="margin-top:16px">
+    <a class="button button-primary" href="{% url 'organizations:members' object.slug %}">Manage members</a>
+    <a class="button button-secondary" href="{% url 'cloud_accounts:list' %}">Cloud accounts</a>
+  </div>
+</section>
+<section class="panel">
+  {% include "components/section_header.html" with kicker="ACCESS" title="Active members" %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Member</th><th>Role</th><th>Joined</th></tr></thead>
+      <tbody>
+        {% for membership in memberships %}
+          <tr>
+            <td><strong>{{ membership.user.display_name }}</strong><small>{{ membership.user.email }}</small></td>
+            <td><span class="badge badge-medium">{{ membership.get_role_display }}</span></td>
+            <td>{{ membership.joined_at }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="3" class="table-empty">No active members.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,9 @@
+<div class="stat-card tone-{{ tone|default:'gold' }}">
+  <div class="stat-top">
+    <span class="stat-label">{{ label }}</span>
+    <span class="stat-icon">{{ icon|default:'◈' }}</span>
+  </div>
+  <div class="stat-value">{{ value }}</div>
+  {% if note %}<div class="stat-note">{{ note }}</div>{% endif %}
+  {% if href %}<a class="stat-link" href="{{ href }}">Inspect →</a>{% endif %}
+</div>

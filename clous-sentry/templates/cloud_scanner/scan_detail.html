@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Assessment #{{ scan.id }} · CloudSentry{% endblock %}
+{% block page_title %}Assessment #{{ scan.id }}{% endblock %}
+{% block content %}
+<section class="panel hero-panel">
+  <span class="eyebrow">ASSESSMENT RECORD</span>
+  <h2>{{ scan.cloud_account.name }}</h2>
+  <p>{{ scan.get_scan_mode_display }} · initiated by {{ scan.initiated_by.email|default:"system" }}</p>
+  <div class="metric-inline">
+    <span>{{ scan.get_status_display }}</span>
+    <span>{{ scan.resources_scanned }} resources</span>
+    <span>{{ scan.findings_count }} findings</span>
+    <span>{{ scan.duration_seconds|default_if_none:"—" }} seconds</span>
+  </div>
+</section>
+<section class="panel">
+  {% include "components/section_header.html" with kicker="RESULT" title="Assessment summary" %}
+  <div class="detail-grid">
+    <div class="detail-item"><span>Started</span><strong>{{ scan.started_at }}</strong></div>
+    <div class="detail-item"><span>Finished</span><strong>{{ scan.finished_at|default:"Pending" }}</strong></div>
+    <div class="detail-item"><span>Cloud account</span><strong>{{ scan.cloud_account.account_identifier }}</strong></div>
+    <div class="detail-item"><span>Data classification</span><strong>{% if scan.is_demo %}Synthetic demo data{% else %}Assessment data{% endif %}</strong></div>
+  </div>
+  {% if scan.error_message %}<div class="form-errors" style="margin-top:14px">{{ scan.error_message }}</div>{% endif %}
+</section>
+<section class="panel">
+  {% include "components/section_header.html" with kicker="EVIDENCE" title="Machine-readable summary" %}
+  <pre class="json-block">{{ scan.summary|pprint }}</pre>
+</section>
+<section class="panel">
+  {% include "components/section_header.html" with kicker="OUTPUT" title="Findings" %}
+  {% include "components/finding_table.html" with findings=findings %}
+</section>
+{% endblock %}

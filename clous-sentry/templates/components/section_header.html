@@ -1,0 +1,10 @@
+<div class="section-heading">
+  <div>
+    <span class="section-kicker">{{ kicker|default:"CloudSentry" }}</span>
+    <h2>{{ title }}</h2>
+    {% if subtitle %}<p>{{ subtitle }}</p>{% endif %}
+  </div>
+  {% if action_url and action_label %}
+    <a class="button button-secondary" href="{{ action_url }}">{{ action_label }}</a>
+  {% endif %}
+</div>

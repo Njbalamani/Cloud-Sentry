@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Organizations · CloudSentry{% endblock %}
+{% block page_title %}Organizations{% endblock %}
+{% block content %}
+{% url 'organizations:create' as create_url %}
+<section class="panel">
+  {% include "components/section_header.html" with kicker="TENANCY" title="Your organizations" subtitle="Each organization isolates accounts, findings, compliance, and reports." action_label="Create organization" action_url=create_url %}
+  <div class="grid-three">
+    {% for organization in organizations %}
+      <article class="stat-card tone-gold">
+        <div class="stat-top"><span class="stat-label">{{ organization.name }}</span><span class="stat-icon">⌘</span></div>
+        <div class="stat-value">{{ organization.member_count }}</div>
+        <div class="stat-note">Active members</div>
+        <div class="form-actions">
+          <a class="button button-secondary" href="{{ organization.get_absolute_url }}">Open</a>
+          {% if organization.id != current_organization.id %}
+            <form method="post" action="{% url 'organizations:activate' organization.id %}">
+              {% csrf_token %}
+              <button class="button button-primary" type="submit">Activate</button>
+            </form>
+          {% endif %}
+        </div>
+      </article>
+    {% empty %}
+      {% include "components/empty_state.html" with title="No organizations" message="Create an organization to begin assessing cloud accounts." action_label="Create organization" action_url=create_url %}
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

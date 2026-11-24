@@ -1,0 +1,20 @@
+<header class="topbar">
+  <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Toggle navigation">☰</button>
+  <div class="topbar-title">
+    <span class="eyebrow">CLOUDSENTRY CONTROL PLANE</span>
+    <h1>{% block page_title %}Security overview{% endblock %}</h1>
+  </div>
+  <div class="topbar-actions">
+    <form class="search-form" method="get" action="{% url 'cloud_scanner:finding-list' %}">
+      <span class="search-icon">⌕</span>
+      <input type="search" name="search" placeholder="Search findings" aria-label="Search findings">
+    </form>
+    <div class="user-chip">
+      <span class="avatar">{{ request.user.display_name|slice:":1"|upper }}</span>
+      <span class="user-meta">
+        <strong>{{ request.user.display_name }}</strong>
+        <small>{{ current_organization_role|default:"member" }}</small>
+      </span>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Resources · {{ cloud_account.name }} · CloudSentry{% endblock %}
+{% block page_title %}Cloud resources{% endblock %}
+{% block content %}
+<section class="panel">
+  {% include "components/section_header.html" with kicker="INVENTORY" title=cloud_account.name subtitle="Resources discovered by read-only assessment." action_label="Back to account" action_url=cloud_account.get_absolute_url %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Resource</th><th>Type</th><th>Region</th><th>Risk</th><th>Discovered</th><th>Source</th></tr></thead>
+      <tbody>
+        {% for resource in resources %}
+          <tr>
+            <td><strong>{{ resource.name }}</strong><small>{{ resource.resource_id }}</small></td>
+            <td>{{ resource.resource_type }}</td>
+            <td>{{ resource.region }}</td>
+            <td><span class="badge badge-{{ resource.risk_level }}">{{ resource.get_risk_level_display }}</span></td>
+            <td>{{ resource.last_seen_at }}</td>
+            <td>{% if resource.is_demo %}<span class="badge badge-demo">Synthetic</span>{% else %}Live{% endif %}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" class="table-empty">No resources discovered yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

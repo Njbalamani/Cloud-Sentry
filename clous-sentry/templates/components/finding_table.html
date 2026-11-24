@@ -1,0 +1,33 @@
+<div class="table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Finding</th>
+        <th>Resource</th>
+        <th>Severity</th>
+        <th>Risk</th>
+        <th>Status</th>
+        <th>Source</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for finding in findings %}
+        <tr>
+          <td>
+            <strong>{{ finding.title }}</strong>
+            <small>{{ finding.rule.rule_id|default:"CloudSentry rule" }}</small>
+          </td>
+          <td>{{ finding.resource_name }}</td>
+          <td><span class="badge badge-{{ finding.severity }}">{{ finding.get_severity_display }}</span></td>
+          <td><span class="score-value">{{ finding.risk_score|floatformat:0 }}</span></td>
+          <td><span class="status status-{{ finding.status }}">{{ finding.get_status_display }}</span></td>
+          <td>{% if finding.is_demo %}<span class="badge badge-demo">Synthetic</span>{% else %}Live{% endif %}</td>
+          <td><a class="row-link" href="{% url 'cloud_scanner:finding-detail' finding.id %}">View</a></td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="7" class="table-empty">No findings match the current scope.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Risk assessment · CloudSentry{% endblock %}
+{% block page_title %}AI risk assessment{% endblock %}
+{% block content %}
+<section class="panel hero-panel">
+  <span class="eyebrow">EXPLAINABLE RISK</span>
+  <h2>{{ assessment.finding.title }}</h2>
+  <p>{{ assessment.explanation }}</p>
+  <div class="metric-inline">
+    <span>{{ assessment.score|floatformat:1 }}/100</span>
+    <span>{{ assessment.severity_band }}</span>
+    <span>{{ assessment.model_version }}</span>
+    <span>{{ assessment.get_source_display }}</span>
+  </div>
+</section>
+<div class="grid-two">
+  <section class="panel">
+    {% include "components/section_header.html" with kicker="MODEL INPUTS" title="Scoring factors" %}
+    <pre class="json-block">{{ assessment.factors|pprint }}</pre>
+  </section>
+  <section class="panel">
+    {% include "components/section_header.html" with kicker="ACTION" title="Recommended remediation" %}
+    <p style="color:var(--muted);font-size:12px">{{ assessment.remediation_summary|default:"No remediation steps were recorded." }}</p>
+    <div class="form-actions" style="margin-top:14px"><a class="button button-secondary" href="{% url 'cloud_scanner:finding-detail' assessment.finding.id %}">Open finding</a></div>
+  </section>
+</div>
+{% endblock %}

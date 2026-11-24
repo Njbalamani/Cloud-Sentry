@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}AI risk assessments · CloudSentry{% endblock %}
+{% block page_title %}AI risk assessments{% endblock %}
+{% block content %}
+<section class="panel">
+  {% include "components/section_header.html" with kicker="RISK INTELLIGENCE" title="Scored findings" subtitle="Scores combine rule severity with a local scikit-learn model trained on synthetic examples." %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Finding</th><th>Score</th><th>Band</th><th>Model</th><th>Source</th><th>Created</th><th></th></tr></thead>
+      <tbody>
+        {% for assessment in assessments %}
+          <tr>
+            <td><strong>{{ assessment.finding.title }}</strong><small>{{ assessment.finding.cloud_account.name }}</small></td>
+            <td><span class="score-value">{{ assessment.score|floatformat:1 }}</span></td>
+            <td><span class="badge badge-{{ assessment.severity_band }}">{{ assessment.severity_band }}</span></td>
+            <td>{{ assessment.model_version }}</td>
+            <td>{{ assessment.get_source_display }}</td>
+            <td>{{ assessment.created_at }}</td>
+            <td><a class="row-link" href="{% url 'risk_engine:detail' assessment.id %}">Open</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="table-empty">No risk assessments recorded yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

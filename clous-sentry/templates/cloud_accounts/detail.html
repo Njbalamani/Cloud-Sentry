@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}{{ cloud_account.name }} · CloudSentry{% endblock %}
+{% block page_title %}{{ cloud_account.name }}{% endblock %}
+{% block content %}
+<section class="panel hero-panel">
+  <span class="eyebrow">CLOUD ACCOUNT</span>
+  <h2>{{ cloud_account.name }}</h2>
+  <p>{{ cloud_account.notes|default:"Authorized AWS account configured for read-only posture assessment." }}</p>
+  <div class="metric-inline">
+    <span>Account {{ cloud_account.account_identifier }}</span>
+    <span>{{ cloud_account.region }}</span>
+    <span>Credentials {{ cloud_account.credential_hint }}</span>
+    <span>{{ cloud_account.get_status_display }}</span>
+  </div>
+  <div class="form-actions" style="margin-top:16px">
+    <button class="button button-primary" id="test-connection" type="button" data-url="{% url 'cloud_accounts:test' cloud_account.id %}">Verify connection</button>
+    <a class="button button-secondary" href="{% url 'cloud_accounts:resources' cloud_account.id %}">View resources</a>
+    <a class="button button-secondary" href="{% url 'cloud_scanner:start' %}">Start assessment</a>
+  </div>
+  <div id="connection-result" class="form-errors" style="display:none;margin-top:14px"></div>
+</section>
+
+<section class="panel">
+  {% include "components/section_header.html" with kicker="CONFIGURATION" title="Account details" %}
+  <div class="detail-grid">
+    <div class="detail-item"><span>Provider</span><strong>{{ cloud_account.get_provider_display }}</strong></div>
+    <div class="detail-item"><span>Credential type</span><strong>{{ cloud_account.get_credential_type_display }}</strong></div>
+    <div class="detail-item"><span>IAM role</span><strong>{{ cloud_account.role_arn|default:"Not configured" }}</strong></div>
+    <div class="detail-item"><span>Read-only enforcement</span><strong>{% if cloud_account.is_read_only %}Enabled{% else %}Disabled{% endif %}</strong></div>
+    <div class="detail-item"><span>Scanning</span><strong>{% if cloud_account.scan_enabled %}Enabled{% else %}Paused{% endif %}</strong></div>
+    <div class="detail-item"><span>Last checked</span><strong>{{ cloud_account.last_checked_at|default:"Never" }}</strong></div>
+  </div>
+</section>
+
+<div class="grid-two">
+  <section class="panel">
+    {% include "components/section_header.html" with kicker="DISCOVERED" title="Cloud resources" %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Resource</th><th>Type</th><th>Risk</th></tr></thead>
+        <tbody>
+          {% for resource in resources|slice:":10" %}
+            <tr><td><strong>{{ resource.name }}</strong><small>{{ resource.resource_id }}</small></td><td>{{ resource.resource_type }}</td><td><span class="badge badge-{{ resource.risk_level }}">{{ resource.get_risk_level_display }}</span></td></tr>
+          {% empty %}
+            <tr><td colspan="3" class="table-empty">No resources discovered yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="panel">
+    {% include "components/section_header.html" with kicker="HISTORY" title="Recent assessments" %}
+    <div class="timeline">
+      {% for scan in scans %}
+        <div class="timeline-item"><span class="timeline-dot"></span><div><strong>#{{ scan.id }} · {{ scan.get_scan_mode_display }}</strong><small>{{ scan.get_status_display }} · {{ scan.findings_count }} findings · {{ scan.started_at }}</small></div></div>
+      {% empty %}
+        {% include "components/empty_state.html" with title="No assessments" message="Run a read-only assessment to evaluate this account." %}
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.getElementById("test-connection").addEventListener("click", function () {
+  const button = this;
+  const result = document.getElementById("connection-result");
+  button.disabled = true;
+  button.textContent = "Verifying";
+  fetch(button.dataset.url, {
+    method: "POST",
+    headers: {"X-CSRFToken": "{{ csrf_token }}", "X-Requested-With": "XMLHttpRequest"}
+  })
+    .then(function (response) { return response.json().then(function (data) { return {ok: response.ok, data: data}; }); })
+    .then(function (payload) {
+      result.style.display = "block";
+      if (payload.ok) {
+        result.textContent = "Connection verified. AWS account " + payload.data.account_id + " · " + payload.data.arn;
+      } else {
+        result.textContent = payload.data.error ? payload.data.error.code + ": " + payload.data.error.message : "Connection could not be verified.";
+      }
+    })
+    .catch(function () { result.style.display = "block"; result.textContent = "Connection could not be verified."; })
+    .finally(function () { button.disabled = false; button.textContent = "Verify connection"; });
+});
+</script>
+{% endblock %}

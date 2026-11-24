@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Scan operations · CloudSentry{% endblock %}
+{% block page_title %}Scan operations{% endblock %}
+{% block content %}
+{% url 'cloud_scanner:start' as start_url %}
+{% url 'cloud_scanner:scan-list' as scans_url %}
+{% url 'cloud_scanner:finding-list' as findings_url %}
+{% url 'cloud_accounts:connect' as connect_url %}
+<section class="panel hero-panel">
+  <span class="eyebrow">ASSESSMENT CONTROL</span>
+  <h2>Run controlled, read-only security assessments.</h2>
+  <p>Live assessments call AWS read-only APIs. Demo assessments use clearly labelled synthetic records and never represent live cloud results.</p>
+  <div class="form-actions" style="margin-top:16px"><a class="button button-primary" href="{{ start_url }}">Start assessment</a></div>
+</section>
+<div class="grid-two">
+  <section class="panel">
+    {% include "components/section_header.html" with kicker="RECENT" title="Assessment activity" action_label="All assessments" action_url=scans_url %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Scan</th><th>Account</th><th>Mode</th><th>Status</th><th>Findings</th></tr></thead>
+        <tbody>
+          {% for scan in recent_scans %}
+            <tr><td><a class="row-link" href="{% url 'cloud_scanner:scan-detail' scan.id %}">#{{ scan.id }}</a></td><td>{{ scan.cloud_account.name }}</td><td>{{ scan.get_scan_mode_display }}</td><td><span class="status status-{{ scan.status }}">{{ scan.get_status_display }}</span></td><td>{{ scan.findings_count }}</td></tr>
+          {% empty %}
+            <tr><td colspan="5" class="table-empty">No assessments recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="panel">
+    {% include "components/section_header.html" with kicker="QUEUE" title="Open findings" action_label="All findings" action_url=findings_url %}
+    <div class="timeline">
+      {% for finding in open_findings %}
+        <div class="timeline-item"><span class="timeline-dot"></span><div><strong>{{ finding.title }}</strong><small>{{ finding.get_severity_display }} · {{ finding.resource_name }} · {{ finding.created_at }}</small></div></div>
+      {% empty %}
+        {% include "components/empty_state.html" with title="Queue clear" message="No open findings are currently recorded." %}
+      {% endfor %}
+    </div>
+  </section>
+</div>
+<section class="panel">
+  {% include "components/section_header.html" with kicker="SCOPE" title="Eligible cloud accounts" action_label="Connect account" action_url=connect_url %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Account</th><th>AWS account ID</th><th>Region</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for account in accounts %}
+          <tr><td><strong>{{ account.name }}</strong></td><td>{{ account.account_identifier }}</td><td>{{ account.region }}</td><td><span class="status status-{{ account.status }}">{{ account.get_status_display }}</span></td></tr>
+        {% empty %}
+          <tr><td colspan="4" class="table-empty">No scanning-enabled accounts are configured.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

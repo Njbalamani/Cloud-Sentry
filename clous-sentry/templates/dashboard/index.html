@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Security dashboard · CloudSentry{% endblock %}
+{% block page_title %}Security overview{% endblock %}
+{% block content %}
+{% url 'cloud_accounts:list' as accounts_url %}
+{% url 'cloud_accounts:connect' as connect_url %}
+{% url 'cloud_scanner:finding-list' as findings_url %}
+{% url 'compliance:index' as compliance_url %}
+<section class="panel hero-panel">
+  <span class="eyebrow">EXECUTIVE SECURITY POSTURE</span>
+  <h2>Your cloud control plane, continuously evaluated.</h2>
+  <p>Live metrics are calculated from connected accounts, assessments, findings, and compliance controls. Computed at {{ metrics.generated_at }}.</p>
+  <div class="metric-inline">
+    <span>{{ metrics.organization.name }}</span>
+    <span>{{ metrics.total_cloud_accounts }} connected accounts</span>
+    <span>{{ metrics.total_scans }} assessments</span>
+  </div>
+</section>
+
+<div class="grid-four">
+  {% include "components/stat_card.html" with label="Total cloud resources" value=metrics.total_resources note="Discovered across connected accounts" icon="☁" tone="gold" href=accounts_url %}
+  {% include "components/stat_card.html" with label="Critical misconfigurations" value=metrics.critical_misconfigurations note="Open findings at critical severity" icon="!" tone="danger" href=findings_url %}
+  {% include "components/stat_card.html" with label="High-risk resources" value=metrics.high_risk_resources note="Resources scoped high or critical" icon="◎" tone="warning" href=accounts_url %}
+  {% include "components/stat_card.html" with label="Compliance score" value=metrics.compliance_score|default_if_none:"—" note="Latest CIS assessment" icon="▣" tone="success" href=compliance_url %}
+</div>
+
+<section class="panel" style="margin-top:18px">
+  {% include "components/section_header.html" with kicker="3D INFRASTRUCTURE" title="Cloud topology" subtitle="Animated map of assessed accounts and discovered resources." action_label="Connect account" action_url=connect_url %}
+  <div class="topology-stage" id="topology-stage">
+    <div class="topology-tooltip" id="topology-tooltip"></div>
+  </div>
+  <div class="topology-legend">
+    <span><i class="legend-dot" style="background:#d8b46a"></i>Cloud account</span>
+    <span><i class="legend-dot" style="background:#ff5f6d"></i>Critical</span>
+    <span><i class="legend-dot" style="background:#ffb547"></i>High</span>
+    <span><i class="legend-dot" style="background:#64a8ff"></i>Low</span>
+    <span><i class="legend-dot" style="background:#9b7bff"></i>Synthetic</span>
+  </div>
+</section>
+
+<div class="chart-wrap">
+  <section class="panel">
+    <div class="panel-header"><div><span class="panel-title">Finding severity distribution</span><span class="panel-subtitle">Computed from all findings in scope</span></div></div>
+    <div class="chart-box"><canvas class="chart-canvas" id="severity-chart"></canvas></div>
+  </section>
+  <section class="panel">
+    <div class="panel-header"><div><span class="panel-title">Seven-day finding trend</span><span class="panel-subtitle">Findings created per day</span></div></div>
+    <div class="chart-box"><canvas class="chart-canvas" id="trend-chart"></canvas></div>
+  </section>
+  <section class="panel">
+    <div class="panel-header"><div><span class="panel-title">Resources by type</span><span class="panel-subtitle">Discovered resource composition</span></div></div>
+    <div class="chart-box"><canvas class="chart-canvas" id="resource-type-chart"></canvas></div>
+  </section>
+  <section class="panel">
+    <div class="panel-header"><div><span class="panel-title">Assessment activity</span><span class="panel-subtitle">Read-only scans and their outcomes</span></div></div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Scan</th><th>Mode</th><th>Status</th><th>Findings</th><th>Started</th></tr></thead>
+        <tbody>
+          {% for scan in metrics.recent_scans %}
+            <tr>
+              <td><strong>#{{ scan.id }}</strong></td>
+              <td>{{ scan.scan_mode }}</td>
+              <td><span class="status status-{{ scan.status }}">{{ scan.status }}</span></td>
+              <td>{{ scan.findings_count }}</td>
+              <td>{{ scan.started_at }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5" class="table-empty">No assessments recorded yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<div class="grid-two" style="margin-top:18px">
+  <section class="panel">
+    {% include "components/section_header.html" with kicker="PRIORITY QUEUE" title="Highest-risk findings" action_label="Open all findings" action_url="/scans/findings/" %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Finding</th><th>Severity</th><th>Score</th></tr></thead>
+        <tbody>
+          {% for finding in metrics.top_findings %}
+            <tr>
+              <td><strong>{{ finding.title }}</strong><small>{{ finding.resource_name }}</small></td>
+              <td><span class="badge badge-{{ finding.severity }}">{{ finding.severity }}</span></td>
+              <td><span class="score-value">{{ finding.risk_score|floatformat:0 }}</span></td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="3" class="table-empty">No open findings in scope.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="panel">
+    {% include "components/section_header.html" with kicker="SCOPE" title="Assessment coverage" %}
+    <div class="detail-grid">
+      <div class="detail-item"><span>Open findings</span><strong>{{ metrics.open_findings }}</strong></div>
+      <div class="detail-item"><span>All findings</span><strong>{{ metrics.total_findings }}</strong></div>
+      <div class="detail-item"><span>Completed scans</span><strong>{{ metrics.completed_scans }}</strong></div>
+      <div class="detail-item"><span>Demo resources</span><strong>{{ metrics.demo_resources }}</strong></div>
+    </div>
+    <div style="margin-top:16px">
+      <a class="button button-secondary" href="{% url 'cloud_scanner:start' %}">Start assessment</a>
+      <a class="button button-secondary" href="{% url 'reports:generate' %}">Generate report</a>
+    </div>
+  </section>
+</div>
+{% endblock %}

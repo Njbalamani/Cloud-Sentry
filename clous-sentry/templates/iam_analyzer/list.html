@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}IAM analyzer · CloudSentry{% endblock %}
+{% block page_title %}IAM security analyzer{% endblock %}
+{% block content %}
+{% url 'iam_analyzer:analyze' as analyze_url %}
+<section class="panel">
+  {% include "components/section_header.html" with kicker="IDENTITY SECURITY" title="IAM policy analysis" subtitle="Least-privilege analysis of managed policies and role trust documents." action_label="Analyze IAM" action_url=analyze_url %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Policy</th><th>Principal</th><th>Account</th><th>Risk</th><th>Findings</th><th>Source</th><th></th></tr></thead>
+      <tbody>
+        {% for analysis in analyses %}
+          <tr>
+            <td><strong>{{ analysis.policy_name }}</strong></td>
+            <td>{{ analysis.principal_arn }}</td>
+            <td>{{ analysis.cloud_account.name }}</td>
+            <td><span class="score-value">{{ analysis.risk_score|floatformat:0 }}</span></td>
+            <td>{{ analysis.findings|length }}</td>
+            <td>{% if analysis.is_demo %}<span class="badge badge-demo">Synthetic</span>{% else %}Live{% endif %}</td>
+            <td><a class="row-link" href="{% url 'iam_analyzer:detail' analysis.id %}">Open</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="table-empty">No policies analyzed yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

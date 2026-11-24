@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Findings · CloudSentry{% endblock %}
+{% block page_title %}Security findings{% endblock %}
+{% block content %}
+<section class="panel">
+  <form method="get" class="filter-bar">
+    <label class="field"><span>Severity</span>{{ filter_form.severity }}</label>
+    <label class="field"><span>Status</span>{{ filter_form.status }}</label>
+    <label class="field"><span>Search</span>{{ filter_form.search }}</label>
+    <button class="button button-primary" type="submit">Apply filters</button>
+    <a class="button button-secondary" href="{% url 'cloud_scanner:finding-list' %}">Reset</a>
+  </form>
+  {% include "components/finding_table.html" with findings=findings %}
+  {% include "components/pagination.html" %}
+</section>
+{% endblock %}

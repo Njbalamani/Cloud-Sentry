@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Connect cloud account · CloudSentry{% endblock %}
+{% block page_title %}Connect cloud account{% endblock %}
+{% block content %}
+<section class="panel hero-panel">
+  <span class="eyebrow">READ-ONLY INTEGRATION</span>
+  <h2>Connect an authorized AWS account</h2>
+  <p>Credentials are encrypted at rest and are never returned to the browser, serialized by the API, or written to logs. CloudSentry requires explicit confirmation that the credentials are read-only.</p>
+</section>
+<section class="panel">
+  <form method="post" class="form-grid">
+    {% csrf_token %}
+    {% for field in form %}
+      <label class="field">
+        <span>{{ field.label }}</span>
+        {{ field }}
+        {% if field.help_text %}<small class="field-help">{{ field.help_text }}</small>{% endif %}
+        {% if field.errors %}<small class="field-error">{{ field.errors|striptags }}</small>{% endif %}
+      </label>
+    {% endfor %}
+    <div class="form-actions">
+      <button class="button button-primary" type="submit">Save account</button>
+      <a class="button button-secondary" href="{% url 'cloud_accounts:list' %}">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

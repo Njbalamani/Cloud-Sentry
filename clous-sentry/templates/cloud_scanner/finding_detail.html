@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}{{ finding.title }} · CloudSentry{% endblock %}
+{% block page_title %}Finding detail{% endblock %}
+{% block content %}
+<section class="panel hero-panel">
+  <span class="eyebrow">SECURITY FINDING</span>
+  <h2>{{ finding.title }}</h2>
+  <p>{{ finding.description|default:"No additional description was recorded." }}</p>
+  <div class="metric-inline">
+    <span class="badge badge-{{ finding.severity }}">{{ finding.get_severity_display }}</span>
+    <span class="status status-{{ finding.status }}">{{ finding.get_status_display }}</span>
+    <span>Risk score {{ finding.risk_score|floatformat:1 }}</span>
+    {% if finding.is_demo %}<span class="badge badge-demo">Synthetic</span>{% endif %}
+  </div>
+</section>
+
+<div class="grid-two">
+  <section class="panel">
+    {% include "components/section_header.html" with kicker="SCOPE" title="Affected configuration" %}
+    <div class="detail-grid">
+      <div class="detail-item"><span>Resource</span><strong>{{ finding.resource_name }}</strong></div>
+      <div class="detail-item"><span>Cloud account</span><strong>{{ finding.cloud_account.name }}</strong></div>
+      <div class="detail-item"><span>Rule</span><strong>{{ finding.rule.rule_id|default:"CloudSentry custom rule" }}</strong></div>
+      <div class="detail-item"><span>Detected</span><strong>{{ finding.created_at }}</strong></div>
+      <div class="detail-item"><span>CIS control</span><strong>{{ finding.rule.cis_control|default:"Custom" }}</strong></div>
+      <div class="detail-item"><span>Assessment</span><strong><a class="row-link" href="{% url 'cloud_scanner:scan-detail' finding.scan_run.id %}">#{{ finding.scan_run.id }}</a></strong></div>
+    </div>
+  </section>
+  <section class="panel">
+    {% include "components/section_header.html" with kicker="AI ANALYSIS" title="Risk explanation" %}
+    {% for assessment in risk_assessments|slice:":1" %}
+      <p style="color:var(--muted);font-size:12px">{{ assessment.explanation }}</p>
+      <div class="metric-inline" style="margin-top:12px">
+        <span>{{ assessment.score|floatformat:1 }}/100</span>
+        <span>{{ assessment.severity_band }}</span>
+        <span>{{ assessment.model_version }}</span>
+        <span>{{ assessment.get_source_display }}</span>
+      </div>
+      <div style="margin-top:12px"><a class="row-link" href="{% url 'risk_engine:detail' assessment.id %}">Open assessment</a></div>
+    {% empty %}
+      {% include "components/empty_state.html" with title="No risk assessment" message="AI scoring has not been recorded for this finding." %}
+    {% endfor %}
+  </section>
+</div>
+
+<section class="panel">
+  {% include "components/section_header.html" with kicker="EVIDENCE" title="Collected evidence" %}
+  <pre class="json-block">{{ finding.evidence|pprint }}</pre>
+</section>
+
+<section class="panel">
+  {% include "components/section_header.html" with kicker="REMEDIATION" title="Recommended secure configuration" subtitle="Advisory guidance only. CloudSentry never applies these changes automatically." %}
+  <div class="grid-two">
+    <div>
+      <h3 style="font-size:13px;color:#ff9ba4;margin-bottom:8px">Before</h3>
+      <pre class="json-block">{{ finding.remediation.before|default:"Not recorded" }}</pre>
+    </div>
+    <div>
+      <h3 style="font-size:13px;color:var(--success);margin-bottom:8px">After</h3>
+      <pre class="json-block">{{ finding.remediation.after|default:"Not recorded" }}</pre>
+    </div>
+  </div>
+  {% if finding.remediation.steps %}
+    <div class="timeline" style="margin-top:16px">
+      {% for step in finding.remediation.steps %}
+        <div class="timeline-item"><span class="timeline-dot"></span><div><strong>{{ step }}</strong></div></div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+
+<section class="panel">
+  {% include "components/section_header.html" with kicker="GOVERNANCE" title="Remediation review" subtitle="Authorized administrators record decisions here. No cloud APIs are called." %}
+  {% if can_review %}
+    <form method="post" class="form-grid">
+      {% csrf_token %}
+      <label class="field"><span>{{ review_form.decision.label }}</span>{{ review_form.decision }}{% if review_form.decision.errors %}<small class="field-error">{{ review_form.decision.errors|striptags }}</small>{% endif %}</label>
+      <label class="field"><span>{{ review_form.notes.label }}</span>{{ review_form.notes }}{% if review_form.notes.errors %}<small class="field-error">{{ review_form.notes.errors|striptags }}</small>{% endif %}</label>
+      <div class="form-actions"><button class="button button-primary" type="submit">Record review</button></div>
+    </form>
+  {% endif %}
+  <div class="timeline" style="margin-top:16px">
+    {% for review in reviews %}
+      <div class="timeline-item"><span class="timeline-dot"></span><div><strong>{{ review.get_decision_display }}</strong><small>{{ review.reviewer.email|default:"System" }} · {{ review.reviewed_at }} · {{ review.notes|default:"No notes" }}</small></div></div>
+    {% empty %}
+      <div class="timeline-item"><span class="timeline-dot"></span><div><strong>No reviews recorded</strong><small>An administrator can record a remediation decision.</small></div></div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

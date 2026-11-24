@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Cloud accounts · CloudSentry{% endblock %}
+{% block page_title %}Cloud accounts{% endblock %}
+{% block content %}
+{% url 'cloud_accounts:connect' as connect_url %}
+<section class="panel">
+  {% include "components/section_header.html" with kicker="CLOUD INTEGRATION" title="Connected accounts" subtitle="Authorized AWS accounts assessed with read-only permissions only." action_label="Connect account" action_url=connect_url %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Account</th><th>AWS account ID</th><th>Region</th><th>Credentials</th><th>Status</th><th>Resources</th><th>Open findings</th><th></th></tr></thead>
+      <tbody>
+        {% for account in accounts %}
+          <tr>
+            <td><strong>{{ account.name }}</strong><small>{{ account.get_credential_type_display }}</small></td>
+            <td>{{ account.account_identifier }}</td>
+            <td>{{ account.region }}</td>
+            <td>{% if account.is_read_only %}<span class="badge badge-low">Read-only</span>{% else %}<span class="badge badge-critical">Write access</span>{% endif %}</td>
+            <td><span class="status status-{{ account.status }}">{{ account.get_status_display }}</span></td>
+            <td>{{ account.resource_count }}</td>
+            <td>{{ account.finding_count }}</td>
+            <td><a class="row-link" href="{% url 'cloud_accounts:detail' account.id %}">Open</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="8" class="table-empty">No cloud accounts connected.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

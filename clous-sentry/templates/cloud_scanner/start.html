@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Start assessment · CloudSentry{% endblock %}
+{% block page_title %}Start assessment{% endblock %}
+{% block content %}
+<section class="panel">
+  {% include "components/section_header.html" with kicker="CONTROLLED SCAN" title="Assessment parameters" subtitle="CloudSentry performs read-only collection only. No remediation actions are executed." %}
+  <form method="post" class="form-grid">
+    {% csrf_token %}
+    {% for field in form %}
+      <label class="field">
+        <span>{{ field.label }}</span>
+        {{ field }}
+        {% if field.help_text %}<small class="field-help">{{ field.help_text }}</small>{% endif %}
+        {% if field.errors %}<small class="field-error">{{ field.errors|striptags }}</small>{% endif %}
+      </label>
+    {% endfor %}
+    <div class="form-actions">
+      <button class="button button-primary" type="submit">Run assessment</button>
+      <a class="button button-secondary" href="{% url 'cloud_scanner:operations' %}">Cancel</a>
+    </div>
+  </form>
+</section>
+<section class="panel">
+  <div class="detail-grid">
+    <div class="detail-item"><span>Live mode</span><strong>Read-only AWS APIs for S3, EC2, RDS, and IAM</strong></div>
+    <div class="detail-item"><span>Demo mode</span><strong>Synthetic records labelled as demo data</strong></div>
+    <div class="detail-item"><span>Prowler mode</span><strong>Requires PROWLER_BIN configuration and read-only access</strong></div>
+    <div class="detail-item"><span>Remediation</span><strong>Advisory only; explicit administrator approval required</strong></div>
+  </div>
+</section>
+{% endblock %}

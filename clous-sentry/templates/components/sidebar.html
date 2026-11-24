@@ -1,0 +1,72 @@
+{% load static %}
+<aside class="sidebar" id="sidebar">
+  <a class="brand" href="{% url 'dashboard:index' %}">
+    <span class="brand-mark"><span></span></span>
+    <span class="brand-copy">
+      <strong>CLOUDSENTRY</strong>
+      <small>Cloud Security Posture</small>
+    </span>
+  </a>
+
+  <div class="org-switcher">
+    <span class="org-label">Active organization</span>
+    {% if current_organization %}
+      <form method="post" action="{% url 'organizations:activate' current_organization.id %}">
+        {% csrf_token %}
+        <select name="organization_id" onchange="this.form.submit()" aria-label="Active organization">
+          {% for org in user_organizations %}
+            <option value="{{ org.id }}" {% if org.id == current_organization.id %}selected{% endif %}>{{ org.name }}</option>
+          {% endfor %}
+        </select>
+      </form>
+    {% else %}
+      <a class="org-empty" href="{% url 'organizations:create' %}">Create organization</a>
+    {% endif %}
+  </div>
+
+  <nav class="nav">
+    <span class="nav-heading">Command center</span>
+    <a class="nav-link {% if '/dashboard/' in request.path %}active{% endif %}" href="{% url 'dashboard:index' %}">
+      <span class="nav-icon">◈</span><span>Security dashboard</span>
+    </a>
+    <a class="nav-link {% if '/scans/' in request.path %}active{% endif %}" href="{% url 'cloud_scanner:operations' %}">
+      <span class="nav-icon">⌁</span><span>Scan operations</span>
+    </a>
+    <a class="nav-link {% if '/cloud-accounts/' in request.path %}active{% endif %}" href="{% url 'cloud_accounts:list' %}">
+      <span class="nav-icon">☁</span><span>Cloud accounts</span>
+    </a>
+
+    <span class="nav-heading">Assurance</span>
+    <a class="nav-link {% if '/iam/' in request.path %}active{% endif %}" href="{% url 'iam_analyzer:list' %}">
+      <span class="nav-icon">◇</span><span>IAM analyzer</span>
+    </a>
+    <a class="nav-link {% if '/risk/' in request.path %}active{% endif %}" href="{% url 'risk_engine:list' %}">
+      <span class="nav-icon">◎</span><span>AI risk engine</span>
+    </a>
+    <a class="nav-link {% if '/compliance/' in request.path %}active{% endif %}" href="{% url 'compliance:index' %}">
+      <span class="nav-icon">▣</span><span>Compliance</span>
+    </a>
+    <a class="nav-link {% if '/reports/' in request.path %}active{% endif %}" href="{% url 'reports:list' %}">
+      <span class="nav-icon">▤</span><span>Reports</span>
+    </a>
+
+    <span class="nav-heading">Administration</span>
+    <a class="nav-link {% if '/organizations/' in request.path %}active{% endif %}" href="{% url 'organizations:list' %}">
+      <span class="nav-icon">⌘</span><span>Organizations</span>
+    </a>
+    <a class="nav-link" href="{% url 'accounts:profile' %}">
+      <span class="nav-icon">◉</span><span>Profile</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="security-note">
+      <span class="pulse-dot"></span>
+      <span>Read-only assessment mode</span>
+    </div>
+    <form method="post" action="{% url 'accounts:logout' %}">
+      {% csrf_token %}
+      <button class="text-button" type="submit">Sign out</button>
+    </form>
+  </div>
+</aside>

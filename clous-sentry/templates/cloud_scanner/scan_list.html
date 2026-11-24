@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Assessments · CloudSentry{% endblock %}
+{% block page_title %}Assessment history{% endblock %}
+{% block content %}
+{% url 'cloud_scanner:start' as start_url %}
+<section class="panel">
+  {% include "components/section_header.html" with kicker="HISTORY" title="Scan runs" subtitle="Each run records scope, mode, and computed findings." action_label="New assessment" action_url=start_url %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Scan</th><th>Account</th><th>Mode</th><th>Status</th><th>Resources</th><th>Findings</th><th>Started</th><th></th></tr></thead>
+      <tbody>
+        {% for scan in scans %}
+          <tr>
+            <td><strong>#{{ scan.id }}</strong></td>
+            <td>{{ scan.cloud_account.name }}</td>
+            <td>{{ scan.get_scan_mode_display }}</td>
+            <td><span class="status status-{{ scan.status }}">{{ scan.get_status_display }}</span></td>
+            <td>{{ scan.resources_scanned }}</td>
+            <td>{{ scan.findings_count }}</td>
+            <td>{{ scan.started_at }}</td>
+            <td><a class="row-link" href="{% url 'cloud_scanner:scan-detail' scan.id %}">Open</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="8" class="table-empty">No assessments recorded yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

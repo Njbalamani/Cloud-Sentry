@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Members · {{ organization.name }} · CloudSentry{% endblock %}
+{% block page_title %}Organization members{% endblock %}
+{% block content %}
+<section class="panel">
+  {% include "components/section_header.html" with kicker="ACCESS CONTROL" title=organization.name subtitle="Grant role-based access to the security workspace." %}
+  <form method="post" class="form-grid">
+    {% csrf_token %}
+    <label class="field"><span>{{ form.email.label }}</span>{{ form.email }}{% if form.email.errors %}<small class="field-error">{{ form.email.errors|striptags }}</small>{% endif %}</label>
+    <label class="field"><span>{{ form.role.label }}</span>{{ form.role }}{% if form.role.errors %}<small class="field-error">{{ form.role.errors|striptags }}</small>{% endif %}</label>
+    <div class="form-actions"><button class="button button-primary" type="submit">Add or update member</button></div>
+  </form>
+</section>
+<section class="panel">
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Member</th><th>Role</th><th>Joined</th><th></th></tr></thead>
+      <tbody>
+        {% for membership in memberships %}
+          <tr>
+            <td><strong>{{ membership.user.display_name }}</strong><small>{{ membership.user.email }}</small></td>
+            <td><span class="badge badge-medium">{{ membership.get_role_display }}</span></td>
+            <td>{{ membership.joined_at }}</td>
+            <td>
+              {% if membership.role != 'owner' %}
+                <form method="post" action="{% url 'organizations:remove-member' membership.id %}">
+                  {% csrf_token %}
+                  <button class="button button-danger" type="submit">Revoke</button>
+                </form>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4" class="table-empty">No active members.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

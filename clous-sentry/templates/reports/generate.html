@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Generate report · CloudSentry{% endblock %}
+{% block page_title %}Generate report{% endblock %}
+{% block content %}
+<section class="panel">
+  {% include "components/section_header.html" with kicker="EXPORT" title="Report parameters" subtitle="Reports are generated from records in the active organization only." %}
+  <form method="post" class="form-grid">
+    {% csrf_token %}
+    {% for field in form %}
+      <label class="field">
+        <span>{{ field.label }}</span>
+        {{ field }}
+        {% if field.errors %}<small class="field-error">{{ field.errors|striptags }}</small>{% endif %}
+      </label>
+    {% endfor %}
+    <div class="form-actions">
+      <button class="button button-primary" type="submit">Generate and download</button>
+      <a class="button button-secondary" href="{% url 'reports:list' %}">Cancel</a>
+    </div>
+  </form>
+</section>
+<section class="panel">
+  <div class="detail-grid">
+    <div class="detail-item"><span>PDF</span><strong>Formatted security evidence package</strong></div>
+    <div class="detail-item"><span>CSV</span><strong>Tabular export for further analysis</strong></div>
+    <div class="detail-item"><span>Demo data</span><strong>Included only when explicitly requested and enabled</strong></div>
+    <div class="detail-item"><span>Credentials</span><strong>Never included in generated files</strong></div>
+  </div>
+</section>
+{% endblock %}

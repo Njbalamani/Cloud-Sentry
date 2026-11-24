@@ -1,0 +1,8 @@
+<div class="empty-state">
+  <span class="empty-icon">◇</span>
+  <h3>{{ title|default:"No data available" }}</h3>
+  <p>{{ message|default:"CloudSentry has not recorded any matching records yet." }}</p>
+  {% if action_url and action_label %}
+    <a class="button button-primary" href="{{ action_url }}">{{ action_label }}</a>
+  {% endif %}
+</div>

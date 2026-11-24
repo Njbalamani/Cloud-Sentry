@@ -1,0 +1,25 @@
+{% extends "auth/base_auth.html" %}
+{% block title %}Sign in · CloudSentry{% endblock %}
+{% block panel_title %}Welcome back{% endblock %}
+{% block panel_subtitle %}Authenticate to continue to your control plane.{% endblock %}
+{% block auth_content %}
+<form method="post" class="auth-form" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    <div class="form-errors">{{ form.non_field_errors }}</div>
+  {% endif %}
+  <label class="field">
+    <span>Email address</span>
+    {{ form.username }}
+    {% if form.username.errors %}<small class="field-error">{{ form.username.errors|striptags }}</small>{% endif %}
+  </label>
+  <label class="field">
+    <span>Password</span>
+    {{ form.password }}
+    {% if form.password.errors %}<small class="field-error">{{ form.password.errors|striptags }}</small>{% endif %}
+  </label>
+  <label class="check-row">{{ form.remember_me }} <span>Keep me signed in</span></label>
+  <button class="button button-primary button-wide" type="submit">Enter control plane</button>
+</form>
+<p class="auth-switch">New to CloudSentry? <a href="{% url 'accounts:register' %}">Create an organization</a></p>
+{% endblock %}

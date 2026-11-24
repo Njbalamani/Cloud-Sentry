@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Analyze IAM · CloudSentry{% endblock %}
+{% block page_title %}Analyze IAM policies{% endblock %}
+{% block content %}
+<section class="panel">
+  {% include "components/section_header.html" with kicker="READ-ONLY ANALYSIS" title="Select an AWS account" subtitle="CloudSentry reads IAM policies and role trust documents. No permissions are changed." %}
+  <form method="post" class="form-grid">
+    {% csrf_token %}
+    <label class="field"><span>{{ form.cloud_account.label }}</span>{{ form.cloud_account }}{% if form.cloud_account.errors %}<small class="field-error">{{ form.cloud_account.errors|striptags }}</small>{% endif %}</label>
+    <div class="form-actions"><button class="button button-primary" type="submit">Run IAM analysis</button></div>
+  </form>
+</section>
+{% endblock %}

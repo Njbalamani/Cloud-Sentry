@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Compliance assessment · CloudSentry{% endblock %}
+{% block page_title %}Compliance assessment{% endblock %}
+{% block content %}
+<section class="panel hero-panel">
+  <span class="eyebrow">ASSESSMENT RESULT</span>
+  <h2>{{ assessment.organization.name }}</h2>
+  <p>{{ assessment.summary.framework|default:"CIS AWS Foundations Benchmark" }}</p>
+  <div class="metric-inline">
+    <span>Score {{ assessment.score|floatformat:1 }}%</span>
+    <span>{{ assessment.passed }} passed</span>
+    <span>{{ assessment.failed }} failed</span>
+    <span>{{ assessment.total }} applicable controls</span>
+  </div>
+</section>
+<section class="panel">
+  {% include "components/section_header.html" with kicker="CONTROL RESULTS" title="CIS control evaluation" %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead><tr><th>Control</th><th>Title</th><th>Status</th><th>Evidence</th></tr></thead>
+      <tbody>
+        {% for result in results %}
+          <tr>
+            <td><strong>{{ result.control.control_id }}</strong></td>
+            <td>{{ result.control.title }}</td>
+            <td><span class="status status-{{ result.status }}">{{ result.get_status_display }}</span></td>
+            <td><pre class="json-block" style="max-height:120px;overflow:auto">{{ result.evidence|pprint }}</pre></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4" class="table-empty">No control results recorded.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

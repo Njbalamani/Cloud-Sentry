@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CloudSentry AI-powered cloud security posture management platform">
+  <meta name="metrics-url" content="{% url 'dashboard_api:metrics' %}">
+  <meta name="topology-url" content="{% url 'dashboard_api:topology' %}">
+  <title>{% block title %}CloudSentry{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="grid-overlay"></div>
+  <div class="app-shell">
+    {% include "components/sidebar.html" %}
+    <div class="main-column">
+      {% include "components/topbar.html" %}
+      <main class="content-wrap">
+        {% include "components/demo_banner.html" %}
+        {% if messages %}
+          <div class="message-stack">
+            {% for message in messages %}
+              <div class="message message-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+      </main>
+      <footer class="app-footer">
+        <span>CLOUDSENTRY · Cloud Security Posture Management</span>
+        <span>Read-only assessment · Explicit approval for remediation</span>
+      </footer>
+    </div>
+  </div>
+  <div id="loading-overlay" class="loading-overlay" aria-hidden="true">
+    <div class="loader-ring"></div>
+    <div class="loader-label">Securing your workspace</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="{% static 'js/main.js' %}"></script>
+  <script src="{% static 'js/charts.js' %}"></script>
+  <script src="{% static 'js/topology.js' %}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

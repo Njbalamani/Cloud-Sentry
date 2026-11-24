@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Profile · CloudSentry{% endblock %}
+{% block page_title %}Account profile{% endblock %}
+{% block content %}
+<section class="panel">
+  {% include "components/section_header.html" with kicker="IDENTITY" title="Profile settings" subtitle="Update the identity used across your CloudSentry organization." %}
+  <form method="post" class="form-grid">
+    {% csrf_token %}
+    {% for field in form %}
+      <label class="field">
+        <span>{{ field.label }}</span>
+        {{ field }}
+        {% if field.errors %}<small class="field-error">{{ field.errors|striptags }}</small>{% endif %}
+      </label>
+    {% endfor %}
+    <div class="form-actions"><button class="button button-primary" type="submit">Save profile</button></div>
+  </form>
+</section>
+<section class="panel">
+  <div class="detail-grid">
+    <div class="detail-item"><span>Platform role</span><strong>{{ request.user.get_role_display }}</strong></div>
+    <div class="detail-item"><span>Multi-factor authentication</span><strong>{% if request.user.mfa_enabled %}Enabled{% else %}Not enabled{% endif %}</strong></div>
+    <div class="detail-item"><span>Member since</span><strong>{{ request.user.date_joined }}</strong></div>
+    <div class="detail-item"><span>Email</span><strong>{{ request.user.email }}</strong></div>
+  </div>
+</section>
+{% endblock %}

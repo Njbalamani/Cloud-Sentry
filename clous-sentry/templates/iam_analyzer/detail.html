@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ analysis.policy_name }} · CloudSentry{% endblock %}
+{% block page_title %}IAM analysis detail{% endblock %}
+{% block content %}
+<section class="panel hero-panel">
+  <span class="eyebrow">IAM ANALYSIS</span>
+  <h2>{{ analysis.policy_name }}</h2>
+  <p>{{ analysis.principal_arn }}</p>
+  <div class="metric-inline">
+    <span>Risk {{ analysis.risk_score|floatformat:0 }}</span>
+    <span>{{ analysis.findings|length }} findings</span>
+    <span>{{ analysis.cloud_account.name }}</span>
+    {% if analysis.is_demo %}<span class="badge badge-demo">Synthetic</span>{% endif %}
+  </div>
+</section>
+<section class="panel">
+  {% include "components/section_header.html" with kicker="DOCUMENT" title="Policy document" %}
+  <pre class="json-block">{{ analysis.policy_document|pprint }}</pre>
+</section>
+<section class="panel">
+  {% include "components/section_header.html" with kicker="FINDINGS" title="Detected access risks" %}
+  <pre class="json-block">{{ analysis.findings|pprint }}</pre>
+</section>
+<section class="panel">
+  {% include "components/section_header.html" with kicker="LEAST PRIVILEGE" title="Recommendations" subtitle="Apply only after administrator review." %}
+  <pre class="json-block">{{ analysis.recommendations|pprint }}</pre>
+</section>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}CloudSentry Access{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+<body class="auth-body">
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="grid-overlay"></div>
+  <main class="auth-shell">
+    <section class="auth-showcase">
+      <a class="brand brand-auth" href="{% url 'landing' %}">
+        <span class="brand-mark"><span></span></span>
+        <span class="brand-copy"><strong>CLOUDSENTRY</strong><small>Cloud Security Posture</small></span>
+      </a>
+      <div class="showcase-copy">
+        <span class="eyebrow">AI-POWERED CLOUD DEFENSE</span>
+        <h1>See every risky configuration before an adversary does.</h1>
+        <p>Unify AWS posture, IAM least privilege, CIS compliance, and AI risk prioritization in one command center.</p>
+      </div>
+      <div class="showcase-grid">
+        <div><span>01</span><strong>Read-only by design</strong></div>
+        <div><span>02</span><strong>Least privilege insights</strong></div>
+        <div><span>03</span><strong>Executive-ready reports</strong></div>
+      </div>
+      <div class="showcase-orbit" aria-hidden="true">
+        <div class="orbit-ring ring-one"></div>
+        <div class="orbit-ring ring-two"></div>
+        <div class="orbit-core"></div>
+      </div>
+    </section>
+    <section class="auth-panel">
+      <div class="auth-card">
+        {% if messages %}
+          <div class="message-stack">
+            {% for message in messages %}<div class="message message-{{ message.tags }}">{{ message }}</div>{% endfor %}
+          </div>
+        {% endif %}
+        <span class="eyebrow">SECURE ACCESS</span>
+        <h2>{% block panel_title %}CloudSentry{% endblock %}</h2>
+        <p class="auth-subtitle">{% block panel_subtitle %}Sign in to your security workspace.{% endblock %}</p>
+        {% block auth_content %}{% endblock %}
+      </div>
+      <div class="auth-footnote">CloudSentry never modifies cloud infrastructure automatically.</div>
+    </section>
+  </main>
+</body>
+</html>
